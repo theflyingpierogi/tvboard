@@ -14,18 +14,6 @@
    Every color, fill, border, radius and typeface lives in
    tv-board/theme.css, which build_board.py inlines below.
    Marketing never edits this block.
-
-   THE BOARD IS DRAWN AT EXACTLY 1920 x 1080 CSS PIXELS AND THEN
-   SCALED TO FIT BY JS. Every number below is a real pixel on that
-   canvas. Do not use vw, vh, %, cqw or cqh for sizing.
-
-   This replaced container query units on 2026-09-14. The Cranberry
-   player's browser predates them (Chrome 105, Aug 2022), so every
-   cqh/cqw declaration was silently dropped as invalid, fonts fell
-   back to 16px and the absolutely positioned zones collapsed onto
-   each other. The screen showed a white band and nothing else. A
-   fixed canvas plus transform:scale works in every browser back to
-   roughly 2012 and is also far easier for a designer to work in.
    ============================================================ */
 *{box-sizing:border-box;margin:0;padding:0}
 body{display:flex;flex-direction:column;align-items:center;gap:14px;padding:14px 16px 22px;background:#050D18}
@@ -43,44 +31,37 @@ body.kiosk .ctl,body.kiosk .note{display:none}
 body.kiosk{padding:0;gap:0;background:#000}
 
 /* ---------------------- board frame -------------------------- */
-/* The fitbox is whatever space we are given. The stage is always
-   1920x1080 and is scaled into it by fitStage(). No aspect-ratio,
-   no viewport units, no container queries: the three things most
-   likely to be missing on a signage player. */
-.fitbox{position:relative;width:100%;max-width:1400px;overflow:hidden;background:#000}
-body.kiosk .fitbox{position:fixed;left:0;top:0;right:0;bottom:0;width:auto;height:auto;max-width:none}
-.stage{position:absolute;left:0;top:0;width:1920px;height:1080px;
-  overflow:hidden;transform-origin:0 0}
+.stage{position:relative;width:100%;max-width:min(100%, calc((100vh - 120px) * 16 / 9));
+  aspect-ratio:16/9;container-type:size;overflow:hidden}
+body.kiosk .stage{max-width:100vw;height:100vh;max-height:100vh}
 
 /* ZONE 1, identity band */
-.hdr{position:absolute;top:0;left:0;right:0;height:118.8px;display:flex;
-  align-items:center;justify-content:space-between;padding:0 76.8px}
-.brand{display:flex;align-items:center;min-width:0}
-.brand .loc{margin-left:26.88px}
-.brand .logo{height:66.96px;width:auto;display:block;flex:none}
-.brand .loc{font-size:22.68px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
-  padding-left:24.96px;border-left-style:solid;border-left-width:2.7px;white-space:nowrap}
-.stamp{display:flex;align-items:center;padding:10.8px 34.56px;border-radius:999px;
-  border-style:solid;border-width:2.16px;flex:none}
-.stamp .dot{width:12.96px;height:12.96px;border-radius:50%;flex:none;margin-right:17.28px}
-.stamp .tx{font-size:20.52px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;white-space:nowrap}
+.hdr{position:absolute;top:0;left:0;right:0;height:11cqh;display:flex;
+  align-items:center;justify-content:space-between;padding:0 4cqw}
+.brand{display:flex;align-items:center;gap:1.4cqw;min-width:0}
+.brand .logo{height:6.2cqh;width:auto;display:block;flex:none}
+.brand .loc{font-size:2.1cqh;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  padding-left:1.3cqw;border-left-style:solid;border-left-width:.25cqh;white-space:nowrap}
+.stamp{display:flex;align-items:center;gap:.9cqw;padding:1cqh 1.8cqw;border-radius:999px;
+  border-style:solid;border-width:.2cqh;flex:none}
+.stamp .dot{width:1.2cqh;height:1.2cqh;border-radius:50%;flex:none}
+.stamp .tx{font-size:1.9cqh;font-weight:800;letter-spacing:.11em;text-transform:uppercase;white-space:nowrap}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .stage[data-state="live"] .stamp .dot{animation:pulse 2.4s ease-in-out infinite}
 
 /* ZONE 2, the rule */
-.rule{position:absolute;top:118.8px;left:0;right:0;height:129.6px;
-  display:flex;align-items:center;padding:0 76.8px}
-.rule .sub{margin-left:46.08px}
-.rule .big{font-size:62.64px;font-weight:900;line-height:1;letter-spacing:-.015em;white-space:nowrap}
-.rule .sub{font-size:25.38px;font-weight:600;line-height:1.25;padding-left:42.24px}
+.rule{position:absolute;top:11cqh;left:0;right:0;height:12cqh;
+  display:flex;align-items:center;gap:2.4cqw;padding:0 4cqw}
+.rule .big{font-size:5.8cqh;font-weight:900;line-height:1;letter-spacing:-.015em;white-space:nowrap}
+.rule .sub{font-size:2.35cqh;font-weight:600;line-height:1.25;padding-left:2.2cqw}
 
 /* ZONE 3, body split */
-.body{position:absolute;top:248.4px;left:0;right:0;bottom:113.4px;
-  display:grid;grid-template-columns:61% 39%;gap:42.24px;padding:23.76px 76.8px 17.28px}
+.body{position:absolute;top:23cqh;left:0;right:0;bottom:10.5cqh;
+  display:grid;grid-template-columns:61% 39%;gap:2.2cqw;padding:2.2cqh 4cqw 1.6cqh}
 .zlab{display:flex;align-items:baseline;justify-content:space-between;
-  padding-bottom:11.88px;margin-bottom:14.04px}
-.zlab .t{font-size:27px;font-weight:800;letter-spacing:.17em;text-transform:uppercase}
-.zlab .c{font-size:19.98px;font-weight:700;letter-spacing:.11em;text-transform:uppercase}
+  padding-bottom:1.1cqh;margin-bottom:1.3cqh}
+.zlab .t{font-size:2.5cqh;font-weight:800;letter-spacing:.17em;text-transform:uppercase}
+.zlab .c{font-size:1.85cqh;font-weight:700;letter-spacing:.11em;text-transform:uppercase}
 
 /* 3a, the add-on menu. Fixed, never rotates. */
 .menu{display:flex;flex-direction:column;min-height:0}
@@ -88,73 +69,69 @@ body.kiosk .fitbox{position:fixed;left:0;top:0;right:0;bottom:0;width:auto;heigh
    list always fits, whether a store has three add-ons or eight.
    --s is set by JS. Design the row, never its height. */
 .rows{--s:1;display:flex;flex-direction:column;justify-content:center;
-  flex:1;min-height:0;overflow:hidden}
-.row + .row{margin-top:calc(9.18px * var(--s))}
+  gap:calc(.85cqh * var(--s));flex:1;min-height:0;overflow:hidden}
 .row{flex:0 0 auto;display:grid;grid-template-columns:1fr auto auto;align-items:center;
-  gap:26.88px;padding:calc(12.42px * var(--s)) calc(34.56px * var(--s))}
-.row .nm{font-weight:700;line-height:1.08;font-size:calc(42.12px * var(--s));
+  gap:1.4cqw;padding:calc(1.15cqh * var(--s)) calc(1.8cqw * var(--s))}
+.row .nm{font-weight:700;line-height:1.08;font-size:calc(3.9cqh * var(--s));
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.row .meta{display:flex;align-items:center;flex-wrap:wrap;
-  margin-top:calc(5.4px * var(--s));font-weight:600;font-size:calc(23.22px * var(--s))}
-.row .meta > *{margin-right:calc(16.32px * var(--s))}
+.row .meta{display:flex;align-items:center;flex-wrap:wrap;gap:0 calc(.85cqw * var(--s));
+  margin-top:calc(.5cqh * var(--s));font-weight:600;font-size:calc(2.15cqh * var(--s))}
 .row .meta .was,.row .meta .req{font-weight:800}
 .row .meta .d{opacity:.4}
 .pill{display:inline-block;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
-  padding:3.02px 14.4px;line-height:1.15;font-size:calc(18.58px * var(--s))}
-.row .now{text-align:right;line-height:1;min-width:calc(249.6px * var(--s))}
+  padding:.28cqh .75cqw;line-height:1.15;font-size:calc(1.72cqh * var(--s))}
+.row .now{text-align:right;line-height:1;min-width:calc(13cqw * var(--s))}
 .row .now .lab{display:block;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
-  font-size:calc(18.58px * var(--s));margin-bottom:calc(3.78px * var(--s))}
-.row .now .amt{font-weight:900;line-height:.92;white-space:nowrap;font-size:calc(64.8px * var(--s))}
-.row .now .amt s{font-weight:800;text-decoration:none;vertical-align:.45em;font-size:calc(30.24px * var(--s))}
+  font-size:calc(1.72cqh * var(--s));margin-bottom:calc(.35cqh * var(--s))}
+.row .now .amt{font-weight:900;line-height:.92;white-space:nowrap;font-size:calc(6cqh * var(--s))}
+.row .now .amt s{font-weight:800;text-decoration:none;vertical-align:.45em;font-size:calc(2.8cqh * var(--s))}
 .bdg{display:inline-block;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
-  padding:calc(5.94px * var(--s)) calc(19.2px * var(--s));white-space:nowrap;
-  font-size:calc(19.98px * var(--s));line-height:1.1}
+  padding:calc(.55cqh * var(--s)) calc(1cqw * var(--s));white-space:nowrap;
+  font-size:calc(1.85cqh * var(--s));line-height:1.1}
 
 /* 3b, the rotating card zone */
 .fresh{position:relative;display:flex;flex-direction:column;min-height:0}
-.fcards{display:grid;grid-template-rows:repeat(3,1fr);gap:16.2px;flex:1;min-height:0}
+.fcards{display:grid;grid-template-rows:repeat(3,1fr);gap:1.5cqh;flex:1;min-height:0}
 .fcard{--cs:1;position:relative;display:flex;flex-direction:column;justify-content:center;
-  padding:17.28px 34.56px;min-height:0;overflow:hidden;
+  padding:1.6cqh 1.8cqw;min-height:0;overflow:hidden;
   transition:opacity .45s ease, transform .45s ease}
 .fcard[data-flag=""]::before{display:none}
 .fcard .nm{padding-right:0}
-.fcard[data-flag]:not([data-flag=""]) .nm{padding-right:105.6px}
-.fcard::before{content:attr(data-flag);position:absolute;top:12.96px;right:26.88px;
-  font-size:15.66px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;padding:3.78px 17.28px}
-.fcard .nm{font-size:calc(33.48px * var(--cs));font-weight:700;line-height:1.1;
+.fcard[data-flag]:not([data-flag=""]) .nm{padding-right:5.5cqw}
+.fcard::before{content:attr(data-flag);position:absolute;top:1.2cqh;right:1.4cqw;
+  font-size:1.45cqh;font-weight:900;letter-spacing:.16em;text-transform:uppercase;padding:.35cqh .9cqw}
+.fcard .nm{font-size:calc(3.1cqh * var(--cs));font-weight:700;line-height:1.1;
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
-.fcard .meta{display:flex;align-items:center;flex-wrap:wrap;
-  margin-top:calc(9.72px * var(--cs));font-size:calc(21.06px * var(--cs));font-weight:600}
-.fcard .meta > *{margin:0 17.28px 3.24px 0}
-.fcard .pill{font-size:calc(16.2px * var(--cs))}
-.fcard .deal{margin-top:calc(10.8px * var(--cs));font-size:calc(38.88px * var(--cs));font-weight:900;line-height:1}
-.fcard .deal s{font-size:calc(23.76px * var(--cs));font-weight:800;text-decoration:none;letter-spacing:.06em;
-  text-transform:uppercase;margin-right:11.52px;vertical-align:.35em}
-.fcards.fade .fcard{opacity:0;transform:translateY(11.88px)}
-.dots{display:flex;align-items:center}
-.dots i{width:11.88px;height:11.88px;border-radius:50%;display:block;margin-left:11.52px}
-.dots i:first-child{margin-left:0}
+.fcard .meta{display:flex;align-items:center;flex-wrap:wrap;gap:.3cqh .9cqw;
+  margin-top:calc(.9cqh * var(--cs));font-size:calc(1.95cqh * var(--cs));font-weight:600}
+.fcard .pill{font-size:calc(1.5cqh * var(--cs))}
+.fcard .deal{margin-top:calc(1cqh * var(--cs));font-size:calc(3.6cqh * var(--cs));font-weight:900;line-height:1}
+.fcard .deal s{font-size:calc(2.2cqh * var(--cs));font-weight:800;text-decoration:none;letter-spacing:.06em;
+  text-transform:uppercase;margin-right:.6cqw;vertical-align:.35em}
+.fcards.fade .fcard{opacity:0;transform:translateY(1.1cqh)}
+.dots{display:flex;gap:.6cqw;align-items:center}
+.dots i{width:1.1cqh;height:1.1cqh;border-radius:50%;display:block}
 .empty{display:flex;align-items:center;justify-content:center;height:100%;grid-row:1 / span 3;
-  font-size:23.76px;font-weight:600;text-align:center;padding:0 38.4px}
-.hair{position:absolute;left:0;bottom:-17.28px;height:4.32px;width:0;opacity:.8}
+  font-size:2.2cqh;font-weight:600;text-align:center;padding:0 2cqw}
+.hair{position:absolute;left:0;bottom:-1.6cqh;height:.4cqh;width:0;opacity:.8}
 @keyframes fill{from{width:0}to{width:100%}}
 
 /* ZONE 4, ticker */
-.tick{position:absolute;left:0;right:0;bottom:0;height:113.4px;
+.tick{position:absolute;left:0;right:0;bottom:0;height:10.5cqh;
   display:grid;grid-template-columns:auto 1fr auto;align-items:stretch}
-.tick .cap{display:flex;align-items:center;padding:0 30.72px 0 76.8px;
-  font-size:22.68px;font-weight:900;letter-spacing:.15em;text-transform:uppercase}
+.tick .cap{display:flex;align-items:center;padding:0 1.6cqw 0 4cqw;
+  font-size:2.1cqh;font-weight:900;letter-spacing:.15em;text-transform:uppercase}
 .tick .win{position:relative;overflow:hidden;display:flex;align-items:center;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 48px);
-  mask-image:linear-gradient(90deg,transparent 0,#000 48px)}
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 2.5cqw);
+  mask-image:linear-gradient(90deg,transparent 0,#000 2.5cqw)}
 .track{display:flex;align-items:center;flex:none;will-change:transform}
-.track .seg{display:flex;align-items:center;padding:0 30.72px;
-  font-size:26.46px;font-weight:700;white-space:nowrap}
-.track .seg u{font-weight:900;letter-spacing:.1em;text-transform:uppercase;font-size:19.98px;margin-right:23.04px}
-.track .sep{width:8.1px;height:8.1px;flex:none}
+.track .seg{display:flex;align-items:center;gap:1.2cqw;padding:0 1.6cqw;
+  font-size:2.45cqh;font-weight:700;white-space:nowrap}
+.track .seg u{font-weight:900;letter-spacing:.1em;text-transform:uppercase;font-size:1.85cqh}
+.track .sep{width:.75cqh;height:.75cqh;flex:none}
 @keyframes roll{from{transform:translateX(0)}to{transform:translateX(var(--shift))}}
-.tick .fix{display:flex;align-items:center;max-width:460.8px;padding:0 76.8px 0 34.56px;
-  font-size:17.28px;font-weight:600;line-height:1.3}
+.tick .fix{display:flex;align-items:center;max-width:24cqw;padding:0 4cqw 0 1.8cqw;
+  font-size:1.6cqh;font-weight:600;line-height:1.3}
 
 /* still frame: a frozen image cannot scroll or time a rotation */
 body.still .hair{display:none}
@@ -172,19 +149,8 @@ body.still .track{justify-content:space-around;width:100%}
                               shadows, the header treatment, the
                               ticker cap shape, background art.
    What does NOT live here  : zone geometry, grid columns, the
-                              pixel sizing, the --s row scale,
+                              cqh/cqw sizing, the --s row scale,
                               rotation timing, any data binding.
-
-   THE CANVAS IS 1920 x 1080 CSS PIXELS. Every length in this file
-   is a real pixel on that canvas, and JS scales the whole board to
-   whatever the screen is. So a 40px headline here is 40px on a
-   1080p screen, half that on a scaled down preview, and you can
-   measure straight off an Illustrator artboard set to 1920x1080.
-
-   Do not use cqh, cqw, vw, vh or percentages for sizing. Container
-   query units were used here until 2026-09-14 and the Cranberry
-   player's browser turned out to be too old to understand them,
-   which blanked the board while every self check reported healthy.
 
    Every rule here targets a class the structure already emits.
    Do not rename a class or add a wrapper element. If a design
@@ -235,7 +201,7 @@ body.still .track{justify-content:space-around;width:100%}
   --font-display: "Archivo", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-body:    "Archivo", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 
-  --radius:      16.2px;
+  --radius:      1.5cqh;
 }
 
 /* ---------------- the board ground ---------------- */
@@ -249,12 +215,12 @@ body.still .track{justify-content:space-around;width:100%}
 }
 
 /* ---------------- zone 1, identity band ---------------- */
-.hdr{ background: var(--bar); border-bottom: 3.24px solid var(--orange); }
+.hdr{ background: var(--bar); border-bottom: .3cqh solid var(--orange); }
 .hdr .loc{ color: var(--bar-muted); border-left-color: var(--bar-line); }
 .stamp{ background: rgba(19,65,108,.06); border-color: var(--bar-line); }
 .stamp .tx{ color: var(--bar-ink); }
-.stamp .dot{ background: var(--cyan); box-shadow: 0 0 0 5.4px rgba(69,176,226,.20); }
-.stage[data-state="stale"] .stamp .dot{ background: var(--orange); box-shadow: 0 0 0 5.4px rgba(248,149,33,.20); }
+.stamp .dot{ background: var(--cyan); box-shadow: 0 0 0 .5cqh rgba(69,176,226,.20); }
+.stage[data-state="stale"] .stamp .dot{ background: var(--orange); box-shadow: 0 0 0 .5cqh rgba(248,149,33,.20); }
 .stage[data-state="stale"] .stamp .tx{ color: #A8641A; }
 .stage[data-state="down"]  .stamp .dot,
 .stage[data-state="still"] .stamp .dot{ background: var(--bar-muted); box-shadow: none; }
@@ -263,23 +229,23 @@ body.still .track{justify-content:space-around;width:100%}
 
 /* ---------------- zone 2, the rule ---------------- */
 .rule{
-  border-bottom: 4.32px solid var(--orange);
+  border-bottom: .4cqh solid var(--orange);
   background: linear-gradient(90deg, rgba(248,149,33,.18) 0%, rgba(248,149,33,.04) 46%, transparent 72%);
 }
 .rule .big{ font-family: var(--font-display); color: var(--ink); }
 .rule .big em{ color: var(--orange); font-style: normal; }
-.rule .sub{ color: var(--muted); border-left: 2.16px solid var(--line); }
+.rule .sub{ color: var(--muted); border-left: .2cqh solid var(--line); }
 
 /* ---------------- zone labels ---------------- */
-.zlab{ border-bottom: 2.16px solid var(--line); }
+.zlab{ border-bottom: .2cqh solid var(--line); }
 .zlab .t{ font-family: var(--font-display); color: #fff; }
 .zlab .c{ color: var(--muted); }
 
 /* ---------------- the add-on row ---------------- */
 .row{
   background: var(--panel);
-  border: 1.94px solid var(--line);
-  border-left: 7.56px solid var(--cyan);
+  border: .18cqh solid var(--line);
+  border-left: .7cqh solid var(--cyan);
   border-radius: var(--radius);
 }
 .row[data-lin="Sativa"]{ border-left-color: var(--sativa); }
@@ -293,19 +259,19 @@ body.still .track{justify-content:space-around;width:100%}
 .row .now .amt{ font-family: var(--font-display); color: #fff; }
 .row .now .amt s{ color: var(--muted); }
 
-.pill{ border: 1.73px solid currentColor; border-radius: 999px; }
+.pill{ border: .16cqh solid currentColor; border-radius: 999px; }
 .pill[data-lin="Sativa"]{ color: var(--sativa); }
 .pill[data-lin="Indica"]{ color: var(--indica); }
 .pill[data-lin="Hybrid"]{ color: var(--hybrid); }
 
 .bdg{ border-radius: 999px; }
 .bdg.low{ background: var(--alert); color: #2A0A00; }
-.bdg.mid{ color: var(--orange-soft); border: 1.73px solid var(--orange-soft); }
+.bdg.mid{ color: var(--orange-soft); border: .16cqh solid var(--orange-soft); }
 
 /* ---------------- the rotating card zone ---------------- */
 .fcard{
   background: linear-gradient(150deg, rgba(248,149,33,.15) 0%, rgba(255,255,255,.04) 68%);
-  border: 1.94px solid rgba(251,184,101,.30);
+  border: .18cqh solid rgba(251,184,101,.30);
   border-radius: var(--radius);
 }
 .fcard::before{ background: var(--orange); color: #2A1500; border-radius: 999px; }
@@ -315,15 +281,15 @@ body.still .track{justify-content:space-around;width:100%}
 .fcard .deal s{ color: var(--orange-soft); }
 .dots i{ background: var(--line); }
 .dots i.on{ background: var(--orange); }
-.empty{ border: 2.16px dashed var(--line); border-radius: var(--radius); color: var(--muted); }
+.empty{ border: .2cqh dashed var(--line); border-radius: var(--radius); color: var(--muted); }
 .hair{ background: var(--orange); border-radius: 999px; }
 
 /* ---------------- zone 4, ticker ---------------- */
-.tick{ border-top: 2.16px solid var(--line); background: rgba(7,28,51,.6); }
+.tick{ border-top: .2cqh solid var(--line); background: rgba(7,28,51,.6); }
 .tick .cap{
   font-family: var(--font-display);
   color: #2A1500; background: var(--orange);
-  clip-path: polygon(0 0, 100% 0, calc(100% - 16.2px) 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 1.5cqh) 100%, 0 100%);
 }
 .track .seg{ color: var(--ink); }
 .track .seg u{ color: var(--cyan-soft); text-decoration: none; }
@@ -344,7 +310,6 @@ body.still .track{justify-content:space-around;width:100%}
   <div class="grp"><b>Right column</b><span id="swZone"></span></div>
 </div>
 
-<div class="fitbox" id="fitbox">
 <div class="stage" id="stage" data-state="live">
   <div class="hdr">
     <div class="brand">
@@ -376,7 +341,6 @@ body.still .track{justify-content:space-around;width:100%}
     <div class="win"><div class="track" id="track"></div></div>
     <div class="fix" id="fix"></div>
   </div>
-</div>
 </div>
 
 <div class="note">
@@ -419,7 +383,7 @@ const DATA = {
         "type": "Sativa",
         "menu": 12.0,
         "addon": 8,
-        "units": 4,
+        "units": 5,
         "tp": "Myrcene",
         "thc": "30.3"
       },
@@ -428,7 +392,7 @@ const DATA = {
         "type": "Indica",
         "menu": 20.0,
         "addon": 12,
-        "units": 102,
+        "units": 103,
         "tp": "Limonene",
         "thc": "84.7"
       },
@@ -455,73 +419,406 @@ const DATA = {
         "type": "Hybrid",
         "menu": 40.0,
         "addon": 25,
-        "units": 5,
+        "units": 6,
         "tp": "Pinene",
         "thc": "82.3"
+      },
+      {
+        "name": "Gillie Grows Mule Kick Flower 3.5g",
+        "type": "Hybrid",
+        "menu": 52.0,
+        "addon": 25,
+        "units": 2,
+        "tp": "Myrcene",
+        "thc": "29.4"
+      }
+    ],
+    "Monaca": [
+      {
+        "name": "Supply Chimera Junky Flower 3.5g",
+        "type": "Hybrid",
+        "menu": 20.0,
+        "addon": 15,
+        "units": 27,
+        "tp": "Caryophyllene",
+        "thc": "20.7"
+      },
+      {
+        "name": "Supply Silver Line Xpress Cartridge 0.5g",
+        "type": "Sativa",
+        "menu": 20.0,
+        "addon": 15,
+        "units": 17,
+        "tp": "Myrcene",
+        "thc": "89.2"
+      },
+      {
+        "name": "Cresco Slurty3 Live Sugar 1g",
+        "type": "Hybrid",
+        "menu": 40.0,
+        "addon": 25,
+        "units": 14,
+        "tp": "Caryophyllene",
+        "thc": "70.0"
+      }
+    ],
+    "Scranton": [
+      {
+        "name": "Good Green White Durban Flower 3.5g",
+        "type": "Sativa",
+        "menu": 22.0,
+        "addon": 15,
+        "units": 12,
+        "tp": "Terpinolene",
+        "thc": "21.0"
+      },
+      {
+        "name": "&Shine WEDDING CKE NCD Cartridge 0.5g",
+        "type": "Hybrid",
+        "menu": 21.0,
+        "addon": 15,
+        "units": 6,
+        "tp": "Caryophyllene",
+        "thc": "86.2"
+      },
+      {
+        "name": "Rythm GRANNY CNDY Flower 3.5g",
+        "type": "Sativa",
+        "menu": 35.0,
+        "addon": 20,
+        "units": 43,
+        "tp": "Limonene",
+        "thc": "26.1"
+      },
+      {
+        "name": "Ozone Triangle Kush Distillate Cart 1.0g",
+        "type": "Indica",
+        "menu": 34.0,
+        "addon": 20,
+        "units": 18,
+        "tp": "Pinene",
+        "thc": "80.3"
+      },
+      {
+        "name": "Cresco Chemex Live Budder 1g",
+        "type": "Sativa",
+        "menu": 40.0,
+        "addon": 25,
+        "units": 11,
+        "tp": "Limonene",
+        "thc": "74.2"
+      }
+    ],
+    "Wayne": [
+      {
+        "name": "Insa Mellow Tablets 5mg/20pk",
+        "type": "Hybrid",
+        "menu": 14.0,
+        "addon": 8,
+        "units": 1,
+        "thc": "0.8"
+      },
+      {
+        "name": "Good Green White Durban Flower 3.5g",
+        "type": "Sativa",
+        "menu": 22.0,
+        "addon": 15,
+        "units": 21,
+        "tp": "Terpinolene",
+        "thc": "21.0"
+      },
+      {
+        "name": "Supply Lime Bars Flower 3.5g",
+        "type": "Indica",
+        "menu": 20.0,
+        "addon": 15,
+        "units": 4,
+        "tp": "Caryophyllene",
+        "thc": "23.3"
+      },
+      {
+        "name": "Prime Mint Sherb Live Sauce 1g",
+        "type": "Indica",
+        "menu": 37.0,
+        "addon": 20,
+        "units": 23,
+        "tp": "Myrcene",
+        "thc": "72.1"
+      },
+      {
+        "name": "Ozone Hazmat OG Distillate Cart 1.0g",
+        "type": "Hybrid",
+        "menu": 34.0,
+        "addon": 20,
+        "units": 7,
+        "tp": "Limonene",
+        "thc": "85.6"
+      },
+      {
+        "name": "Supply 814 Fireworks Crumble Wax 1g",
+        "type": "Sativa",
+        "menu": 30.0,
+        "addon": 20,
+        "units": 1,
+        "tp": "Limonene",
+        "thc": "80.2"
+      },
+      {
+        "name": "Ozone Dynamite Stix Disposable Distillate Cart 1.0g",
+        "type": "Hybrid",
+        "menu": 40.0,
+        "addon": 25,
+        "units": 9,
+        "tp": "Limonene",
+        "thc": "81.5"
+      },
+      {
+        "name": "Kind Tree Tri State Black Banana Live Sugar 2g",
+        "type": "Hybrid",
+        "menu": 63.0,
+        "addon": 30,
+        "units": 4,
+        "tp": "Caryophyllene",
+        "thc": "73.7"
+      }
+    ],
+    "Whitehall": [
+      {
+        "name": "Good Green CHCKN N WFFLZ Flower 3.5g",
+        "type": "Sativa",
+        "menu": 22.0,
+        "addon": 15,
+        "units": 11,
+        "tp": "Limonene",
+        "thc": "21.2"
+      },
+      {
+        "name": "Simply Herb Zero Gravity Flower 7g",
+        "type": "Hybrid",
+        "menu": 30.0,
+        "addon": 20,
+        "units": 13,
+        "tp": "Caryophyllene",
+        "thc": "24.9"
+      },
+      {
+        "name": "Prime Guelah Don Extractor's Blend Live Sauce 1g",
+        "type": "Indica",
+        "menu": 37.0,
+        "addon": 20,
+        "units": 9,
+        "tp": "Myrcene",
+        "thc": "72.7"
+      },
+      {
+        "name": "Cresco Blueberry Space Cake LR Cartridge 0.5g",
+        "type": "Indica",
+        "menu": 34.0,
+        "addon": 25,
+        "units": 17,
+        "tp": "Myrcene",
+        "thc": "72.4"
+      },
+      {
+        "name": "Insa Mule Kick Flower 3.5g",
+        "type": "Indica",
+        "menu": 32.0,
+        "addon": 25,
+        "units": 1,
+        "tp": "Myrcene",
+        "thc": "29.4"
       }
     ]
   },
   "justLanded": {
     "Cranberry": [
       {
-        "name": "Simply Herb Heavy Hitter Flower 3.5g",
-        "party": "AWH",
-        "label": "Just landed"
+        "name": "Insa Zelly Dnutz Live Wax 1g",
+        "type": "Hybrid",
+        "thc": "76.2",
+        "sub": "Received Sep 12"
       },
       {
-        "name": "Ozone Ms.Universe Distillate Cart 1.0g",
-        "party": "AWH",
-        "label": "Just landed"
+        "name": "Insa Super Silver Haze Live Batter 1g",
+        "type": "Sativa",
+        "thc": "67.7",
+        "sub": "Received Sep 11"
       },
       {
-        "name": "Rythm GREEN T LR Cartridge 1g",
-        "party": "3P",
-        "label": "New arrival"
+        "name": "BITS Elderberry Wellness 1:1 CBD:THC Troches 5mg/20pk (100mg)",
+        "type": "1:1",
+        "thc": "0.2",
+        "sub": "Received Sep 10"
       },
       {
-        "name": "Ozone Black Cherry Troches 50mg/10pk 500mg",
-        "party": "AWH",
-        "label": "Just landed"
+        "name": "Alien Labs Dark Web Flower 3.5g",
+        "type": "Hybrid",
+        "thc": "25.0",
+        "sub": "Received Sep 9"
       },
       {
-        "name": "Ozone Reserve Animal Rntz Flower 3.5g",
-        "party": "AWH",
-        "label": "Just landed"
+        "name": "Jim's Stash Dozicot Flower 28g",
+        "type": "Indica",
+        "thc": "19.0",
+        "sub": "Received Sep 8"
       },
       {
-        "name": "Cresco 707 Headband LR Cartridge 1g",
-        "party": "3P",
-        "label": "New arrival"
+        "name": "Belushi's Farm Wedding Cke Flower 3.5g",
+        "type": "Hybrid",
+        "thc": "29.6",
+        "sub": "Received Sep 7"
+      }
+    ],
+    "Monaca": [
+      {
+        "name": "Garcia Hand Picked Wingsuit Flower 3.5g",
+        "type": "Sativa",
+        "thc": "26.0",
+        "sub": "Received Sep 12"
       },
       {
-        "name": "Simply Herb Gastro Flower 7g",
-        "party": "AWH",
-        "label": "Just landed"
+        "name": "Cresco Green Line OG Live Sugar 1g",
+        "type": "Hybrid",
+        "thc": "80.7",
+        "sub": "Received Sep 11"
       },
       {
-        "name": "Ozone Cheesy Diesel Distillate Cart 1.0g",
-        "party": "AWH",
-        "label": "Just landed"
+        "name": "Strane Stash Grape GG LTD Disposable 2g",
+        "type": "Indica",
+        "thc": "85.4",
+        "sub": "Received Sep 10"
       },
       {
-        "name": "Revel Mango Cartridge 1g",
-        "party": "3P",
-        "label": "New arrival"
+        "name": "Kind Tree Grape Sitter Live Crumble 1g",
+        "type": "Indica",
+        "thc": "71.6",
+        "sub": "Received Sep 9"
       },
       {
-        "name": "Simply Herb Rainbow Skunk Flower 3.5g",
-        "party": "AWH",
-        "label": "Just landed"
+        "name": "Kind Tree AK Mints Live Budder 1g",
+        "type": "Indica",
+        "thc": "73.6",
+        "sub": "Received Sep 8"
       },
       {
-        "name": "Ozone Banoreoz Disposable Distillate Cart 1.0g",
-        "party": "AWH",
-        "label": "Just landed"
+        "name": "Strane Stash Golden Pineapple Disposable 2g",
+        "type": "Indica",
+        "thc": "86.4",
+        "sub": "Received Sep 7"
+      }
+    ],
+    "Scranton": [
+      {
+        "name": "Kind Tree Dosi Sensation Live Sugar 1g",
+        "type": "Indica",
+        "thc": "71.7",
+        "sub": "Received Sep 12"
       },
       {
-        "name": "Strane Stash White Lotus LTD Cartridge 1g",
-        "party": "3P",
-        "label": "New arrival"
+        "name": "Cresco Black Maple Small Flower 7g",
+        "type": "Indica",
+        "thc": "28.2",
+        "sub": "Received Sep 11"
+      },
+      {
+        "name": "Remedy Indica Blend RSO 1G",
+        "type": "Indica",
+        "thc": "73.7",
+        "sub": "Received Sep 10"
+      },
+      {
+        "name": "Kind Tree IC Banger Live Budder 1g",
+        "type": "Hybrid",
+        "thc": "72.0",
+        "sub": "Received Sep 9"
+      },
+      {
+        "name": "Supply Cattywampus Cartridge 0.5g",
+        "type": "Hybrid",
+        "thc": "91.5",
+        "sub": "Received Sep 8"
+      },
+      {
+        "name": "Level Protab Lights Out 20mg THC+10mg CBN+5mg CBG/10pk",
+        "type": "Indica",
+        "thc": "12.4",
+        "sub": "Received Sep 7"
+      }
+    ],
+    "Wayne": [
+      {
+        "name": "Prime LA Pop RCKZ AU Live Badder 2g",
+        "type": "Hybrid",
+        "thc": "68.6",
+        "sub": "Received Sep 12"
+      },
+      {
+        "name": "Alien Labs Dark Web Flower 3.5g",
+        "type": "Hybrid",
+        "thc": "25.0",
+        "sub": "Received Sep 11"
+      },
+      {
+        "name": "Belushi's Farm Wedding Cke Flower 3.5g",
+        "type": "Hybrid",
+        "thc": "29.6",
+        "sub": "Received Sep 10"
+      },
+      {
+        "name": "Double Bear Grease Monkey Sugar 4g",
+        "type": "Hybrid",
+        "thc": "76.2",
+        "sub": "Received Sep 9"
+      },
+      {
+        "name": "Good News Peach 1:1 Troches 10mg/10pk (100mg)",
+        "type": "1:1",
+        "thc": "0.3",
+        "sub": "Received Sep 8"
+      },
+      {
+        "name": "Remedi Harlequin RSO 1g",
+        "type": "1:1",
+        "thc": "39.7",
+        "sub": "Received Sep 7"
+      }
+    ],
+    "Whitehall": [
+      {
+        "name": "Organic Remedies Rest 1:1 Tincture 30mL (300mgTHC:300mgCBN)",
+        "type": "Hybrid",
+        "thc": "1.1",
+        "sub": "Received Sep 12"
+      },
+      {
+        "name": "Insa Raspberry Lime Diamond Troches 50mg/20pk (1000mg)",
+        "type": "Hybrid",
+        "thc": "1.8",
+        "sub": "Received Sep 11"
+      },
+      {
+        "name": "Level Protab Boost 20mg THC+7mg THCv+3mg CBG/10pk",
+        "type": "Sativa",
+        "thc": "12.3",
+        "sub": "Received Sep 10"
+      },
+      {
+        "name": "Cresco WC Watermelon Z Small Flower 7g",
+        "type": "Indica",
+        "thc": "27.6",
+        "sub": "Received Sep 9"
+      },
+      {
+        "name": "Supply Twin Wooks Cartridge 1g",
+        "type": "Indica",
+        "thc": "89.4",
+        "sub": "Received Sep 8"
+      },
+      {
+        "name": "Backyard Atomic Collider Smalls 7g",
+        "type": "Hybrid",
+        "thc": "17.1",
+        "sub": "Received Sep 7"
       }
     ]
   }
@@ -545,31 +842,6 @@ const CFG = {
      is the reverse. Flip this one string to swap them back. */
   cardZone: "bundles"
 };
-
-/* ============================================================
-   THE FIT. The board is laid out at a fixed 1920x1080 and scaled
-   into whatever the player gives us. This is deliberately the
-   dumbest possible mechanism: no container queries, no
-   aspect-ratio, no viewport units, because a signage player's
-   browser is frequently years behind a desktop one and drops
-   anything it does not recognise WITHOUT ERROR. That is how the
-   board came up as a white band over an empty blue field on
-   2026-09-14 while reporting every stage healthy.
-   ============================================================ */
-const BUILD = "2026-09-14 px-canvas";
-function fitStage(){
-  const box = document.getElementById("fitbox");
-  const st  = document.getElementById("stage");
-  if (!box || !st) return;
-  let w = box.clientWidth  || window.innerWidth  || 1920;
-  let h = box.clientHeight;
-  if (!h){ h = Math.round(w * 9 / 16); box.style.height = h + "px"; }
-  let k = Math.min(w / 1920, h / 1080);
-  if (!isFinite(k) || k <= 0) k = 1;
-  st.style.transform = "scale(" + k + ")";
-  st.style.left = Math.round((w - 1920 * k) / 2) + "px";
-  st.style.top  = Math.round((h - 1080 * k) / 2) + "px";
-}
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -646,8 +918,8 @@ function paintMenu(){
   $("#cnt").textContent = list.length + (list.length === 1 ? " item" : " items");
   $("#rows").innerHTML = list.map(it => {
     const bits = ['<span class="pill" data-lin="' + it.type + '">' + it.type + '</span>'];
-    if (it.thc && parseFloat(it.thc) >= 5) bits.push("<span>THC " + it.thc + "%</span>");
-    if (it.tp) bits.push("<span>" + it.tp + "</span>");
+    if (it.thc && parseFloat(it.thc) >= 5) bits.push("THC " + it.thc + "%");
+    if (it.tp) bits.push(it.tp);
     bits.push('<span class="was">Menu $' + it.menu + '</span>');
     if (it.req) bits.push('<span class="req">' + it.req + '</span>');
     return '<div class="row" data-lin="' + it.type + '">'
@@ -666,8 +938,7 @@ function cardItems(){
   if (zone === "fresh") return (DATA.justLanded[store] || []).map(it => ({
     flag: it.party || "New", nm: it.name,
     meta: [it.type ? '<span class="pill" data-lin="' + it.type + '">' + it.type + '</span>' : "",
-           it.thc ? "<span>THC " + it.thc + "%</span>" : "",
-           it.sub ? "<span>" + it.sub + "</span>" : ""].filter(Boolean).join("")
+           it.thc ? "THC " + it.thc + "%" : "", it.sub || ""].filter(Boolean).join(" ")
   }));
   return (DATA.bundles || []).map(b => {
     const p = b.split("|");
@@ -811,34 +1082,7 @@ function paintChrome(){
    failure in one still leaves the rest of the screen useful, and ?debug=1
    surfaces what broke, which matters when the only way to see this screen is
    a security camera. */
-const DEBUG = params.get("debug") === "1" || params.get("debug") === "2";
-/* debug=2 paints the report full screen in huge type, because the only
-   way anyone can see the Cranberry board is a security camera thirty
-   feet away and the small overlay is not readable at that distance. */
-const DEBUG_BIG = params.get("debug") === "2";
-
-function sup(prop, val){
-  try { return (window.CSS && CSS.supports && CSS.supports(prop, val)) ? "y" : "n"; }
-  catch (e){ return "?"; }
-}
-/* CSS.supports("gap","1px") answers yes on browsers that only have GRID
-   gap, so flex gap has to be measured rather than asked about. */
-function flexGapOK(){
-  try {
-    const d = document.createElement("div");
-    d.style.cssText = "position:absolute;visibility:hidden;display:flex;gap:40px";
-    d.appendChild(document.createElement("i"));
-    d.appendChild(document.createElement("i"));
-    document.body.appendChild(d);
-    const ok = d.scrollWidth >= 40;
-    d.parentNode.removeChild(d);
-    return ok ? "y" : "n";
-  } catch (e){ return "?"; }
-}
-function chromeVer(){
-  const m = /Chrom(?:e|ium)\/(\d+)/.exec(navigator.userAgent);
-  return m ? m[1] : "?";
-}
+const DEBUG = params.get("debug") === "1";
 const TRACE = [];
 function safe(label, fn){
   try { fn(); TRACE.push("ok   " + label); }
@@ -850,35 +1094,25 @@ function safe(label, fn){
 
 function paintDebug(){
   let box = document.getElementById("dbg");
-  if (!DEBUG){ if (box && box.parentNode) box.parentNode.removeChild(box); return; }
+  if (!DEBUG){ if (box) box.remove(); return; }
   if (!box){
     box = document.createElement("div");
     box.id = "dbg";
+    box.style.cssText = "position:absolute;left:2cqw;top:2cqh;z-index:99;max-width:60cqw;"
+      + "background:rgba(0,0,0,.82);color:#fff;font:700 1.9cqh/1.5 monospace;"
+      + "padding:1.4cqh 1.6cqw;border-radius:1cqh;white-space:pre-wrap";
     document.getElementById("stage").appendChild(box);
   }
-  box.style.cssText = DEBUG_BIG
-    ? "position:absolute;left:0;top:0;width:1920px;height:1080px;z-index:99;"
-      + "background:#FFFFFF;color:#000000;font:700 44px/1.38 monospace;"
-      + "padding:56px 48px;white-space:pre-wrap;overflow:hidden"
-    : "position:absolute;left:38px;top:22px;z-index:99;max-width:1180px;"
-      + "background:rgba(0,0,0,.86);color:#FFFFFF;font:700 26px/1.5 monospace;"
-      + "padding:20px 26px;border-radius:14px;white-space:pre-wrap";
-
-  const lines = [
-    "BUILD " + BUILD,
-    "chrome=" + chromeVer() + "  cqh=" + sup("width", "1cqh")
-      + "  ar=" + sup("aspect-ratio", "16/9") + "  flexgap=" + flexGapOK(),
-    "store=" + store + "  state=" + state + "  zone=" + zone,
-    "rows=" + document.querySelectorAll(".row").length
-      + "  cards=" + document.querySelectorAll(".fcard").length
-      + "  ticker=" + document.querySelectorAll(".track .seg").length
-  ].concat(TRACE);
-  box.textContent = lines.join("\n");
+  box.textContent = "DEBUG  store=" + store + "  state=" + state + "  zone=" + zone
+    + "\nua=" + navigator.userAgent.slice(0, 90)
+    + "\nrows=" + document.querySelectorAll(".row").length
+    + "  cards=" + document.querySelectorAll(".fcard").length
+    + "  ticker=" + document.querySelectorAll(".track .seg").length
+    + "\n" + TRACE.join("\n");
 }
 
 function render(){
   TRACE.length = 0;
-  safe("fit", fitStage);
   safe("chrome", paintChrome);
   safe("menu", paintMenu);
   safe("cards", function(){ buildSets(); startRotation(); });
@@ -906,12 +1140,8 @@ document.addEventListener("click", e => {
 
 buildControls();
 render();
-window.addEventListener("resize", () => { fitStage(); fitRows(); fitCards(); paintTicker(); });
+window.addEventListener("resize", () => { fitRows(); fitCards(); paintTicker(); });
 if (document.fonts) document.fonts.ready.then(() => { fitRows(); fitCards(); paintTicker(); });
-/* Players sometimes report a 0x0 viewport for a moment after load. One late
-   re-fit costs nothing and saves a board scaled to nothing. */
-setTimeout(fitStage, 400);
-setTimeout(fitStage, 2500);
 </script>
 
 </body>
